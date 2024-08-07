@@ -50,5 +50,20 @@ module Yajl
     attach_function :free_error,         :yajl_free_error,         [:handle, :pointer],                :void
     attach_function :get_bytes_consumed, :yajl_get_bytes_consumed, [:handle],                          :size_t
     attach_function :status_to_string,   :yajl_status_to_string,   [:status],                          :string
+
+    def self.set_config(handle, option, value)
+      case value
+      when TrueClass, FalseClass
+        config(handle, option, :int, value ? 1 : 0)
+      when Integer
+        config(handle, option, :int, value)
+      when Float
+        config(handle, option, :double, value)
+      when String
+        config(handle, option, :string, value)
+      else
+        raise ArgumentError, "Unsupported value type for yajl_config"
+      end
+    end
   end
 end
